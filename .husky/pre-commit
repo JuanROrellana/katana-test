@@ -1,0 +1,29 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo 'Styling, testing and building your project before committing'
+
+# Check Prettier standards
+cd server && npm run check-format ||
+(
+    echo 'Prettier Failed. Run npm run format, add changes and try commit again.';
+    false;
+)
+
+# Check ESLint Standards
+cd server && npm run check-lint ||
+(
+    echo 'ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
+    false;
+)
+
+# If everything passes commit
+echo 'Code looks good to me... Trying to build now.'
+cd server && npm run build ||
+(
+    echo 'Next build failed: View the errors above to see why.'
+    false;
+)
+
+# If everything passes... Now we can commit
+echo '✅✅✅✅ Committing this now. ✅✅✅✅'

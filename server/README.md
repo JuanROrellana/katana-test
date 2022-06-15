@@ -43,6 +43,9 @@ $ npm run start:dev
 
 # production mode
 $ npm run start:prod
+
+# start a postgres DB
+$ docker-compose -f .docker-compose/docker-compose.yml up -d
 ```
 
 ## Test
@@ -58,16 +61,9 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Points to work on
+1. Add Validation on the request
+2. Add database connection and migration support/ 
+3. Support Docker
+4. Provide unit and integration tests
+5. Add auth and endpoint protection

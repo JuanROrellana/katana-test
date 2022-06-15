@@ -1,12 +1,12 @@
-import {Controller, Get} from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
 @Controller({
-    path: 'api/decks',
-    version: '1',
+  path: 'api/decks',
+  version: '1',
 })
 export class DecksController {
-    @Get()
-    get() {
-        return 'Hello World';
-    }
+  @Get()
+  get() {
+    return 'Hello World';
+  }
 }

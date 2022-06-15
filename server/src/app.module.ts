@@ -3,9 +3,7 @@ import { AppService } from './app.service';
 import { DecksModule } from './decks/decks.module';
 
 @Module({
-  imports: [
-    DecksModule,
-  ],
+  imports: [DecksModule],
   controllers: [],
   providers: [AppService],
 })
