@@ -11,7 +11,7 @@ cd server && npm run check-format ||
 )
 
 # Check ESLint Standards
-cd server && npm run check-lint ||
+npm run check-lint ||
 (
     echo 'ESLint Check Failed. Make the required changes listed above, add changes and try to commit again.'
     false;
@@ -19,7 +19,7 @@ cd server && npm run check-lint ||
 
 # If everything passes commit
 echo 'Code looks good to me... Trying to build now.'
-cd server && npm run build ||
+npm run build ||
 (
     echo 'Next build failed: View the errors above to see why.'
     false;
