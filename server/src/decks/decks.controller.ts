@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreateDeckDto } from './dtos/create-deck.dto';
+import { DecksService } from './decks.service';
 
 @Controller({
   path: 'api/decks',
   version: '1',
 })
 export class DecksController {
-  @Get()
-  get() {
-    return 'Hello World';
+  constructor(private deckService: DecksService) {}
+
+  @Post()
+  createDek(@Body() createDeckDto: CreateDeckDto) {
+    return this.deckService.createDeck(createDeckDto);
   }
 }

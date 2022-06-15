@@ -62,8 +62,9 @@ $ npm run test:cov
 ```
 
 ## Points to work on
+0. Attach Postman collection
 1. Add Validation on the request
-2. Add database connection and migration support/ 
+2. Add database connection and migration support.
 3. Support Docker
 4. Provide unit and integration tests
 5. Add auth and endpoint protection
