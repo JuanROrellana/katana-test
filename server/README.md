@@ -68,6 +68,16 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Database
+
+```bash
+# Create a migration from entities
+npm run typeorm migration:generate -- -n initialSchema -o
+
+# Execute migrations 
+npm run typeorm migration:run
+```
+
 ## Points to work on
 0. Attach Postman collection
 1. Add Validation on the request
