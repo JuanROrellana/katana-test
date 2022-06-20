@@ -1,5 +1,4 @@
 import { IsBoolean, IsEnum } from 'class-validator';
-
 import { ApiProperty } from '@nestjs/swagger';
 import { DeckTypeEnum } from '../deck.entity';
 

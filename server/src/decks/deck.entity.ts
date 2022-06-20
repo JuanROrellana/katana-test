@@ -1,5 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 import { Card } from './card.entity';
+import { Exclude } from 'class-transformer';
 
 export enum DeckTypeEnum {
   FULL = 'FULL',
@@ -24,6 +25,7 @@ export class Deck {
   @Column()
   remaining: number;
 
+  @Exclude()
   @OneToMany(() => Card, (card) => card.deck)
   cards: Card[];
 }

@@ -1,5 +1,4 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-
 import { Deck } from './deck.entity';
 
 export enum SuitEnum {
@@ -8,21 +7,6 @@ export enum SuitEnum {
   CLUBS = 'CLUBS',
   DIAMONDS = 'DIAMONDS',
 }
-
-export type ValueType =
-  | 'ACE'
-  | '2'
-  | '3'
-  | '4'
-  | '5'
-  | '6'
-  | '7'
-  | '8'
-  | '9'
-  | '10'
-  | 'JACK'
-  | 'QUEEN'
-  | 'KING';
 
 @Entity()
 export class Card {

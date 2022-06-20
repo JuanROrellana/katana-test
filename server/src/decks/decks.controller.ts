@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { CreateDeckDto } from './dtos/create-deck.dto';
 import { DecksService } from './decks.service';
+import { instanceToPlain } from 'class-transformer';
 
 @Controller({
   path: 'api/decks',
@@ -11,6 +12,6 @@ export class DecksController {
 
   @Post()
   createDek(@Body() createDeckDto: CreateDeckDto) {
-    return this.deckService.createDeck(createDeckDto);
+    return instanceToPlain(this.deckService.createDeck(createDeckDto));
   }
 }
