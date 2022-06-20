@@ -21,6 +21,9 @@ export class Deck {
   @Column()
   shuffled: boolean;
 
+  @Column()
+  remaining: number;
+
   @OneToMany(() => Card, (card) => card.deck)
   cards: Card[];
 }
