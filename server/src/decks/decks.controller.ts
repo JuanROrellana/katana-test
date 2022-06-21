@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateDeckDto } from './dtos/create-deck.dto';
 import { DecksService } from './decks.service';
 import { instanceToPlain } from 'class-transformer';
@@ -19,5 +19,10 @@ export class DecksController {
   @Get('/:id')
   openDeck(@Param('id') id: string, @Body() openDeckDto: OpenDeckDto) {
     return this.deckService.openDeck(id, openDeckDto);
+  }
+
+  @Patch('/:id')
+  drawCard(@Param('id') id: string) {
+    return this.deckService.drawCard(id);
   }
 }

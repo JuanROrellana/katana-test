@@ -67,6 +67,32 @@ export class DecksService {
   }
 
   async openDeck(id: string, openDeckDto: OpenDeckDto) {
+    const deck = (await this.getDeckWithCards(id)) as Deck;
+
+    if (openDeckDto.shuffled && !deck.shuffled) {
+      this.shuffleCards(deck);
+    }
+
+    return deck;
+  }
+
+  shuffleCards(deck: Deck): void {
+    deck.cards.sort();
+    //TODO: shuffle Cards
+  }
+
+  async drawCard(id: string) {
+    const deck = (await this.getDeckWithCards(id)) as Deck;
+    deck.cards = deck.cards.filter(
+      (card) => card.id != deck.cards[deck.cards.length - 1].id,
+    );
+    deck.remaining = deck.remaining - 1;
+    await this.deckRepo.save(deck);
+    await this.cardRepo.delete(deck.cards[deck.cards.length - 1].id);
+    return deck.cards;
+  }
+
+  async getDeckWithCards(id: string) {
     if (!id) {
       return null;
     }
@@ -79,16 +105,6 @@ export class DecksService {
     if (!deck) {
       return new NotFoundException('Deck not Found');
     }
-
-    if (openDeckDto.shuffled && !deck.shuffled) {
-      this.shuffleCards(deck);
-    }
-
     return deck;
-  }
-
-  shuffleCards(deck: Deck): void {
-    deck.cards.sort();
-    //TODO: shuffle Cards
   }
 }
