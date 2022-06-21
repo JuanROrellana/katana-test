@@ -3,19 +3,19 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck, DeckTypeEnum } from './deck.entity';
 import { CreateDeckDto } from './dtos/create-deck.dto';
-import { Card, SuitEnum } from './card.entity';
 import { fullDeckValues } from '../common/contants/fullDeckValues.constant';
 import { shortDeckValues } from '../common/contants/shortDeckValues.constant';
-import { OpenDeckDto } from './dtos/open-deck.dto';
+import { DeckHelper } from './utils/deck.helper';
+import { Card } from './card.entity';
 
 @Injectable()
 export class DecksService {
   constructor(
     @InjectRepository(Deck) private deckRepo: Repository<Deck>,
-    @InjectRepository(Card) private cardRepo: Repository<Card>,
+    private deckHelper: DeckHelper,
   ) {}
 
-  async createDeck(createDeckDto: CreateDeckDto) {
+  async createDeck(createDeckDto: CreateDeckDto): Promise<Deck> {
     if (createDeckDto.shuffled) {
       if (createDeckDto.type == DeckTypeEnum.FULL) {
         fullDeckValues.sort(function () {
@@ -33,69 +33,33 @@ export class DecksService {
     const deck = this.deckRepo.create({
       type: createDeckDto.type,
       shuffled: createDeckDto.shuffled,
-      remaining: this.getRemaining(createDeckDto.type),
+      remaining: this.deckHelper.getRemaining(createDeckDto.type),
     });
     await this.deckRepo.save(deck);
-    deck.cards = await this.getCards(createDeckDto.type, deck);
+    deck.cards = await this.deckHelper.getCards(createDeckDto.type, deck);
     return deck;
   }
 
-  async getCards(deckType: DeckTypeEnum, deck: Deck): Promise<Card[]> {
-    let deckToLoop: string[];
-    const cards: Card[] = [];
-    if (deckType == DeckTypeEnum.SHORT) {
-      deckToLoop = shortDeckValues;
-    } else {
-      deckToLoop = fullDeckValues;
+  async openDeck(id: string, shuffled: boolean) {
+    const deck = (await this.getDeckWithCardsById(id)) as Deck;
+    if (shuffled && !deck.shuffled) {
+      this.deckHelper.shuffleCards(deck);
     }
-    for (let idx = 0; idx < deckToLoop.length; idx++) {
-      cards.push(await this.saveCard(deckToLoop[idx], SuitEnum.DIAMONDS, deck));
-      cards.push(await this.saveCard(deckToLoop[idx], SuitEnum.HEARTS, deck));
-      cards.push(await this.saveCard(deckToLoop[idx], SuitEnum.CLUBS, deck));
-      cards.push(await this.saveCard(deckToLoop[idx], SuitEnum.SPADES, deck));
-    }
-    return cards;
-  }
-
-  getRemaining(deckType: DeckTypeEnum): number {
-    return deckType == DeckTypeEnum.FULL ? 52 : 32;
-  }
-
-  saveCard(value: string, suit: SuitEnum, deck: Deck): Promise<Card> {
-    const card = this.cardRepo.create({ value, suit, deck });
-    return this.cardRepo.save(card);
-  }
-
-  async openDeck(id: string, openDeckDto: OpenDeckDto) {
-    const deck = (await this.getDeckWithCards(id)) as Deck;
-
-    if (openDeckDto.shuffled && !deck.shuffled) {
-      this.shuffleCards(deck);
-    }
-
     return deck;
   }
 
-  shuffleCards(deck: Deck): void {
-    deck.cards.sort();
-    //TODO: shuffle Cards
-  }
-
-  async drawCard(id: string) {
-    const deck = (await this.getDeckWithCards(id)) as Deck;
-    deck.cards = deck.cards.filter(
-      (card) => card.id != deck.cards[deck.cards.length - 1].id,
-    );
+  async drawCard(id: string): Promise<Card[]> {
+    const deck = await this.getDeckWithCardsById(id);
     deck.remaining = deck.remaining - 1;
     await this.deckRepo.save(deck);
-    await this.cardRepo.delete(deck.cards[deck.cards.length - 1].id);
+    await this.deckHelper.deleteCard(deck.cards[deck.cards.length - 1].id);
+    deck.cards = deck.cards.filter(
+      (card) => card.id !== deck.cards[deck.cards.length - 1].id,
+    );
     return deck.cards;
   }
 
-  async getDeckWithCards(id: string) {
-    if (!id) {
-      return null;
-    }
+  async getDeckWithCardsById(id: string): Promise<Deck> {
     const deck = await this.deckRepo.findOne({
       where: {
         id: id,
@@ -103,7 +67,7 @@ export class DecksService {
       relations: ['cards'],
     });
     if (!deck) {
-      return new NotFoundException('Deck not Found');
+      return null;
     }
     return deck;
   }

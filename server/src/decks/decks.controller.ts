@@ -3,6 +3,8 @@ import { CreateDeckDto } from './dtos/create-deck.dto';
 import { DecksService } from './decks.service';
 import { instanceToPlain } from 'class-transformer';
 import { OpenDeckDto } from './dtos/open-deck.dto';
+import { ApiResponse } from '@nestjs/swagger';
+import { Deck } from './deck.entity';
 
 @Controller({
   path: 'api/decks',
@@ -12,13 +14,29 @@ export class DecksController {
   constructor(private deckService: DecksService) {}
 
   @Post()
-  createDek(@Body() createDeckDto: CreateDeckDto) {
-    return instanceToPlain(this.deckService.createDeck(createDeckDto));
+  @ApiResponse({
+    status: 201,
+    description: 'The record has been successfully created.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. The Body has incorrect data',
+  })
+  createDek(@Body() createDeckDto: CreateDeckDto): Deck {
+    return <Deck>instanceToPlain(this.deckService.createDeck(createDeckDto));
   }
 
-  @Get('/:id')
-  openDeck(@Param('id') id: string, @Body() openDeckDto: OpenDeckDto) {
-    return this.deckService.openDeck(id, openDeckDto);
+  @Get('/:id/:shuffled')
+  @ApiResponse({
+    status: 200,
+    description: 'Data returned correctly.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request. The Body has incorrect data',
+  })
+  openDeck(@Param('id') id: string, @Param('shuffled') shuffled: boolean) {
+    return this.deckService.openDeck(id, shuffled);
   }
 
   @Patch('/:id')
