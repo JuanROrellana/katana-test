@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateDeckDto } from './dtos/create-deck.dto';
 import { DecksService } from './decks.service';
 import { instanceToPlain } from 'class-transformer';
+import { OpenDeckDto } from './dtos/open-deck.dto';
 
 @Controller({
   path: 'api/decks',
@@ -13,5 +14,10 @@ export class DecksController {
   @Post()
   createDek(@Body() createDeckDto: CreateDeckDto) {
     return instanceToPlain(this.deckService.createDeck(createDeckDto));
+  }
+
+  @Get('/:id')
+  openDeck(@Param('id') id: string, @Body() openDeckDto: OpenDeckDto) {
+    return this.deckService.openDeck(id, openDeckDto);
   }
 }

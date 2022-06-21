@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck, DeckTypeEnum } from './deck.entity';
@@ -6,6 +6,7 @@ import { CreateDeckDto } from './dtos/create-deck.dto';
 import { Card, SuitEnum } from './card.entity';
 import { fullDeckValues } from '../common/contants/fullDeckValues.constant';
 import { shortDeckValues } from '../common/contants/shortDeckValues.constant';
+import { OpenDeckDto } from './dtos/open-deck.dto';
 
 @Injectable()
 export class DecksService {
@@ -63,5 +64,31 @@ export class DecksService {
   saveCard(value: string, suit: SuitEnum, deck: Deck): Promise<Card> {
     const card = this.cardRepo.create({ value, suit, deck });
     return this.cardRepo.save(card);
+  }
+
+  async openDeck(id: string, openDeckDto: OpenDeckDto) {
+    if (!id) {
+      return null;
+    }
+    const deck = await this.deckRepo.findOne({
+      where: {
+        id: id,
+      },
+      relations: ['cards'],
+    });
+    if (!deck) {
+      return new NotFoundException('Deck not Found');
+    }
+
+    if (openDeckDto.shuffled && !deck.shuffled) {
+      this.shuffleCards(deck);
+    }
+
+    return deck;
+  }
+
+  shuffleCards(deck: Deck): void {
+    deck.cards.sort();
+    //TODO: shuffle Cards
   }
 }
