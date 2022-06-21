@@ -12,7 +12,7 @@ export class DecksService {
     @InjectRepository(Card) private cardRepo: Repository<Card>,
   ) {}
 
-  valueType: string[] = [
+  deckValues: string[] = [
     'ACE',
     '2',
     '3',
@@ -28,7 +28,32 @@ export class DecksService {
     'KING',
   ];
 
+  shortDeckValues: string[] = [
+    'ACE',
+    '7',
+    '8',
+    '9',
+    '10',
+    'JACK',
+    'QUEEN',
+    'KING',
+  ];
+
   async createDeck(createDeckDto: CreateDeckDto) {
+    if (createDeckDto.shuffled) {
+      if (createDeckDto.type == DeckTypeEnum.FULL){
+        this.deckValues.sort(function (a, b) {
+          return 0.5 - Math.random();
+        });
+      }
+
+      if (createDeckDto.type == DeckTypeEnum.SHORT){
+        this.shortDeckValues.sort(function (a, b) {
+          return 0.5 - Math.random();
+        });
+      }
+    }
+
     const deck = this.deckRepo.create({
       type: createDeckDto.type,
       shuffled: createDeckDto.shuffled,
@@ -54,44 +79,37 @@ export class DecksService {
     return this.cardRepo.save(card);
   }
 
-  async getFullCards(deck: Deck): Promise<Card[]> {
-    const cards: Card[] = [];
-    for (let idx = 0; idx < this.valueType.length; idx++) {
+  async getFullCards(deck: Deck, cards: Card[] = []): Promise<Card[]> {
+    for (let idx = 0; idx < this.deckValues.length; idx++) {
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.DIAMONDS, deck),
+        await this.saveCard(this.deckValues[idx], SuitEnum.DIAMONDS, deck),
       );
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.HEARTS, deck),
+        await this.saveCard(this.deckValues[idx], SuitEnum.HEARTS, deck),
       );
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.CLUBS, deck),
+        await this.saveCard(this.deckValues[idx], SuitEnum.CLUBS, deck),
       );
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.SPADES, deck),
+        await this.saveCard(this.deckValues[idx], SuitEnum.SPADES, deck),
       );
     }
     return cards;
   }
 
-  async getShortCards(deck: Deck): Promise<Card[]> {
-    const cards: Card[] = [];
-    cards.push(await this.saveCard(this.valueType[0], SuitEnum.DIAMONDS, deck));
-    cards.push(await this.saveCard(this.valueType[0], SuitEnum.HEARTS, deck));
-    cards.push(await this.saveCard(this.valueType[0], SuitEnum.CLUBS, deck));
-    cards.push(await this.saveCard(this.valueType[0], SuitEnum.SPADES, deck));
-
-    for (let idx = 6; idx < this.valueType.length; idx++) {
+  async getShortCards(deck: Deck, cards: Card[] = []): Promise<Card[]> {
+    for (let idx = 0; idx < this.shortDeckValues.length; idx++) {
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.DIAMONDS, deck),
+        await this.saveCard(this.shortDeckValues[idx], SuitEnum.DIAMONDS, deck),
       );
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.HEARTS, deck),
+        await this.saveCard(this.shortDeckValues[idx], SuitEnum.HEARTS, deck),
       );
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.CLUBS, deck),
+        await this.saveCard(this.shortDeckValues[idx], SuitEnum.CLUBS, deck),
       );
       cards.push(
-        await this.saveCard(this.valueType[idx], SuitEnum.SPADES, deck),
+        await this.saveCard(this.shortDeckValues[idx], SuitEnum.SPADES, deck),
       );
     }
     return cards;
