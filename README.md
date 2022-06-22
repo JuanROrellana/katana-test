@@ -18,6 +18,7 @@ The API should have the following methods to handle cards and decks:
 - Postgresql
 - Jest
 - Docker
+- GitHub Actions
 
 ## Running the Application
 
