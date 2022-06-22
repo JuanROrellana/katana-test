@@ -80,5 +80,4 @@ npm run typeorm migration:run
 - Add Unit Test to Husky.
 - Dockerize Application.
 - Response DTO for OpenDeck and DrawCard.
-- Add Database Creation on start Docker.
 - Deploy to Heroku.
