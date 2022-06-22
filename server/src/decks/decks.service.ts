@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Deck, DeckTypeEnum } from './deck.entity';
@@ -40,8 +40,8 @@ export class DecksService {
     return deck;
   }
 
-  async openDeck(id: string, shuffled: boolean) {
-    const deck = (await this.getDeckWithCardsById(id)) as Deck;
+  async openDeck(id: string, shuffled: boolean): Promise<Deck> {
+    const deck = await this.getDeckWithCardsById(id);
     if (shuffled && !deck.shuffled) {
       this.deckHelper.shuffleCards(deck);
     }
@@ -67,7 +67,7 @@ export class DecksService {
       relations: ['cards'],
     });
     if (!deck) {
-      return null;
+      throw new HttpException('Not Found', HttpStatus.NOT_FOUND);
     }
     return deck;
   }

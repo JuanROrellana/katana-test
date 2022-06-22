@@ -2,7 +2,6 @@ import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateDeckDto } from './dtos/create-deck.dto';
 import { DecksService } from './decks.service';
 import { instanceToPlain } from 'class-transformer';
-import { OpenDeckDto } from './dtos/open-deck.dto';
 import { ApiResponse } from '@nestjs/swagger';
 import { Deck } from './deck.entity';
 
@@ -33,13 +32,21 @@ export class DecksController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Bad request. The Body has incorrect data',
+    description: 'Bad request',
   })
   openDeck(@Param('id') id: string, @Param('shuffled') shuffled: boolean) {
     return this.deckService.openDeck(id, shuffled);
   }
 
   @Patch('/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'Data updated correctly.',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad request',
+  })
   drawCard(@Param('id') id: string) {
     return this.deckService.drawCard(id);
   }
