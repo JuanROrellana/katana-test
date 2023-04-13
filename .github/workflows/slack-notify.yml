@@ -27,7 +27,7 @@ jobs:
         uses: Gamesight/slack-workflow-status@master
         with:
           # Required Input
-          repo_token: ${{secrets.GITHUB_TOKEN}}
+          repo_token: ${{secrets.GH_TOKEN}}
           slack_webhook_url: ${{secrets.SLACK_WEBHOOK_URL}}
           # Optional Input
           channel: '#anthony-test-channel'
