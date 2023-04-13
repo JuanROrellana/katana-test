@@ -11,6 +11,7 @@ The API should have the following methods to handle cards and decks:
 - Open a Deck
 - Draw a Card
 
+
 ## tech Stack used
 - Nest js
 - TypeORM
