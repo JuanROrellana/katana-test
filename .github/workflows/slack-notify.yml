@@ -1,0 +1,15 @@
+on:
+  pull_request:
+    branches: [ master ]
+    
+name: Notify Slack Demo
+jobs:
+  slackNotification:
+    name: Notify Slack
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Notify Slack
+      uses: drilonrecica/action-slack-notify@0.0.3
+      env:
+        SLACK_WEBHOOK: https://hooks.slack.com/services/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
